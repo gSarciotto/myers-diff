@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "rootDir": ".",
+        "outDir": "build",
+        "target": "ES2019",
+        "incremental": true,
+        "tsBuildInfoFile": "incremental",
+        "sourceMap": true,
+        "module": "CommonJS",
+        "allowSyntheticDefaultImports": true,
+        "strict": true,
+        "lib": [
+            "DOM",
+            "ES2020"
+        ]
+    },
+    "include": [
+        "src",
+    ],
+}
