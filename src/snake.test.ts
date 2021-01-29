@@ -1,7 +1,7 @@
 import { getSnakeEnd } from "./snake";
 import type { Position } from "./utils";
 
-// TODO testes pra unicode e testes na origem
+// TODO? non BMP unicode
 
 test("getSnakeEnd should return the end position when source string and final string are equal", () => {
     const sourceString = "abc";
@@ -14,7 +14,34 @@ test("getSnakeEnd should return the end position when source string and final st
         finalString,
         startingPosition: origin
     });
-    expect(calculatedPosition).toStrictEqual(expectedPosition);
+    expect(calculatedPosition).toEqual(expectedPosition);
+});
+
+test("getSnakeEnd should be able to move diagonally more than once whenever starting from the origin and there is more than one sequential match", () => {
+    const sourceString = "aabc";
+    const finalString = "aadc";
+    const origin: Position = [0, 0];
+    const twoDiagonalsFromOrigin: Position = [2, 2];
+
+    const calculatedPosition = getSnakeEnd({
+        sourceString,
+        finalString,
+        startingPosition: origin
+    });
+    expect(calculatedPosition).toEqual(twoDiagonalsFromOrigin);
+});
+
+test("getSnakeEnd should return the origin when starting from origin and no match is possible", () => {
+    const sourceString = "ABCABBA";
+    const finalString = "CBABAC";
+    const origin: Position = [0, 0];
+
+    const snakeEnd = getSnakeEnd({
+        sourceString,
+        finalString,
+        startingPosition: origin
+    });
+    expect(snakeEnd).toEqual(origin);
 });
 
 test("getSnakeEnd should stop whenever it hits the right border of the edit graph", () => {
@@ -37,7 +64,7 @@ test("getSnakeEnd should stop whenever it hits the right border of the edit grap
         finalString,
         startingPosition
     });
-    expect(calculatedPosition).toStrictEqual(expectedPosition);
+    expect(calculatedPosition).toEqual(expectedPosition);
 });
 
 test("getSnakeEnd should stop whenever it hits the bottom border of the edit graph", () => {
@@ -60,7 +87,7 @@ test("getSnakeEnd should stop whenever it hits the bottom border of the edit gra
         finalString,
         startingPosition
     });
-    expect(calculatedPosition).toStrictEqual(expectedPosition);
+    expect(calculatedPosition).toEqual(expectedPosition);
 });
 
 test("getSnakeEnd should return the startingPosition whenever the characters after the startingPosition aren't equal", () => {
@@ -73,7 +100,7 @@ test("getSnakeEnd should return the startingPosition whenever the characters aft
         finalString,
         startingPosition
     });
-    expect(snakeEnd).toStrictEqual(startingPosition);
+    expect(snakeEnd).toEqual(startingPosition);
 });
 
 test("getSnakeEnd should be able to move diagonally just once whenever there is just one sequential match", () => {
@@ -90,7 +117,7 @@ test("getSnakeEnd should be able to move diagonally just once whenever there is 
         finalString,
         startingPosition
     });
-    expect(snakeEnd).toStrictEqual(oneDiagonalFromStartingPosition);
+    expect(snakeEnd).toEqual(oneDiagonalFromStartingPosition);
 });
 
 test("getSnakeEnd should be able to move diagonally more than once whenever there is more than one sequential match", () => {
@@ -107,5 +134,22 @@ test("getSnakeEnd should be able to move diagonally more than once whenever ther
         finalString,
         startingPosition
     });
-    expect(snakeEnd).toStrictEqual(twoDiagonalsFromStartingPosition);
+    expect(snakeEnd).toEqual(twoDiagonalsFromStartingPosition);
+});
+
+test("getSnakeEnd should be able to match BMP unicode characters", () => {
+    const sourceString = "ABCA\u03A9BA";
+    const finalString = "C\u03A9ABAC";
+    const startingPosition: Position = [4, 1];
+    const oneDiagonalFromStartingPosition: Position = [
+        startingPosition[0] + 1,
+        startingPosition[1] + 1
+    ];
+
+    const snakeEnd = getSnakeEnd({
+        sourceString,
+        finalString,
+        startingPosition
+    });
+    expect(snakeEnd).toEqual(oneDiagonalFromStartingPosition);
 });
